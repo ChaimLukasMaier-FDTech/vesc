@@ -1,10 +1,11 @@
 import os
 import launch
-from launch_ros.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 from ament_index_python.packages import get_package_share_directory
 from launch.substitutions import TextSubstitution
+from launch.substitutions import LaunchConfiguration
 
 from pathlib import Path
 
@@ -24,10 +25,12 @@ def generate_launch_description():
         "steering_angle_to_servo_offset", default_value=TextSubstitution(text="0.5304")
     )
 
-    params = {"speed_to_erpm_gain": speed_to_erpm_gain, "speed_to_erpm_offset": speed_to_erpm_offset,
-              "steering_angle_to_servo_gain": steering_angle_to_servo_gain, "steering_angle_to_servo_offset": steering_angle_to_servo_offset}
+    params = {"speed_to_erpm_gain": LaunchConfiguration('speed_to_erpm_gain'),
+              "speed_to_erpm_offset": LaunchConfiguration('speed_to_erpm_offset'),
+              "steering_angle_to_servo_gain": LaunchConfiguration('steering_angle_to_servo_gain'),
+              "steering_angle_to_servo_offset": LaunchConfiguration('steering_angle_to_servo_offset')}
 
-    components = []
+    components = [speed_to_erpm_gain, speed_to_erpm_offset, steering_angle_to_servo_gain, steering_angle_to_servo_offset]
 
     components.append(launch.actions.IncludeLaunchDescription(
         XMLLaunchDescriptionSource(os.path.join(get_package_share_directory(
